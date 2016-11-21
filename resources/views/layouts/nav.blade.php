@@ -22,7 +22,16 @@
             <ul class="nav navbar-nav">
                 @unless (Auth::guest())
                 <li><a href="{{ url('/admin/settings') }}">Settings</a></li>
-                <li><a href="{{ url('/connections') }}">connections</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        connections <span class="caret"></span>
+                    </a>
+
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="{{ url('/connections') }}">All Connections</a></li>
+                        <li><a href="{{ url('/connections/create') }}">Create New Connection</a></li>
+                    </ul>
+                </li>
                 @endunless
             </ul>
 
