@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Http\Requests\ConnectionRequest;
 use Illuminate\Http\Request;
 use App\Connection;
@@ -15,7 +16,7 @@ class ConnectionsController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        // $this->middleware('auth');
     }
 
     /**
@@ -36,7 +37,7 @@ class ConnectionsController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.connections.create');
     }
 
     /**
@@ -45,9 +46,13 @@ class ConnectionsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ConnectionRequest $request)
     {
-        //
+        $connection = Connection::create($request->all());
+        return redirect('connections')->with([
+            'flash_message' => TRUE,
+            'flash_message_success' => "Connection \"{$request->all()['jira_project_key']}\" has been created"
+        ]);
     }
 
     /**
@@ -94,8 +99,26 @@ class ConnectionsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Connection $connection)
     {
-        //
+        $connection->delete();
+        return redirect('connections')->with([
+            'flash_message' => TRUE,
+            'flash_message_danger' => "Connection \"{$connection->jira_project_key}\" has been deleted"
+        ]);
+    }
+
+        /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function jiraPost(Request $request)
+    {
+        $data = $request->getContent();
+        // var_export($data);
+        $data_arr = json_encode(json_decode($data));
+        var_export($data_arr);
     }
 }

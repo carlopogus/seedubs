@@ -21,4 +21,6 @@ Route::get('admin/settings', 'SettingsController@index')->name('settings');
 
 Route::post('admin/settings', 'SettingsController@update');
 
-Route::resource('connections', 'ConnectionsController');
+Route::group(['middleware' => ['auth']], function () {
+    Route::resource('connections', 'ConnectionsController');
+});

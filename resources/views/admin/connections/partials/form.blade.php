@@ -1,4 +1,3 @@
-{!! Form::hidden('user_id', 1) !!}
 <div class="form-group">
     {!! Form::label('jira_project_key', 'Jira Project Key:') !!}
     {!! Form::text('jira_project_key', null, ['class' => 'form-control']) !!}
