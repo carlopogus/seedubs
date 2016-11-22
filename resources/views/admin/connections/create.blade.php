@@ -10,11 +10,16 @@
 <h1>Create A New Connection</h1>
 <hr>
 
+<div class="panel panel-default">
+  <div class="panel-body">
+
 {!! Form::open(['url' => 'connections']) !!}
 
     @include('admin.connections.partials.form', ['submitButtonText' => 'Create Connection'])
 
 {!! Form::close() !!}
+
+</div></div>
 
 </div>
 @endsection

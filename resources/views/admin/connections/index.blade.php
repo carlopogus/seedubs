@@ -7,12 +7,13 @@
 <hr>
 <div class="panel panel-default">
   <div class="panel-body">
+  @if(Session::has('message'))
+    <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ Session::get('message') }}</p>
+  @endif
 <table class="table">
     <tr>
         <th>#</th>
         <th>Jira Project Key</th>
-        <th>CW Company Id</th>
-        <th>CW Agreement</th>
         <th>CW Service Board</th>
         <th>CW Ticket Priority</th>
         <th>Actions</th>
@@ -21,8 +22,6 @@
     <tr class="form-group">
         <td>{{ $connection->id }}</td>
         <td>{{ $connection->jira_project_key }}</td>
-        <td>{{ $connection->cw_company_id }}</td>
-        <td>{{ $connection->cw_agreement }}</td>
         <td>{{ $connection->cw_service_board }}</td>
         <td>{{ $connection->cw_ticket_priority }}</td>
         <td>

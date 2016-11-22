@@ -52,8 +52,8 @@ class ConnectionsController extends Controller
     {
         $connection = Connection::create($request->all());
         return redirect('connections')->with([
-            'flash_message' => TRUE,
-            'flash_message_success' => "Connection \"{$request->all()['jira_project_key']}\" has been created"
+            'message' => "Connection \"{$request->all()['jira_project_key']}\" has been created",
+            'alert-class' => "alert-success"
         ]);
     }
 
@@ -65,6 +65,16 @@ class ConnectionsController extends Controller
      */
     public function show(Connection $connection)
     {
+
+        $cw_company = $connection->getCompanyById($connection->cw_company_id);
+        if (!is_null($cw_company)) {
+            $connection->cw_company_name = $cw_company->CompanyName;
+        }
+        $cw_agreement = $connection->getAgreement($connection->cw_agreement);
+        if (!is_null($cw_agreement)) {
+            $connection->cw_agreement_name = $cw_agreement->AgreementName;
+        }
+
         return view('admin.connections.show', compact('connection'));
     }
 
@@ -76,17 +86,27 @@ class ConnectionsController extends Controller
      */
     public function edit(Connection $connection)
     {
+        $company = $this->getConnectionCompanySelectDefault($connection);
+        $agreement = $this->getConnectionAgreementSelectDefault($connection);
+        return view('admin.connections.edit', compact('connection', 'company', 'agreement'));
+    }
+
+    public function getConnectionCompanySelectDefault(Connection $connection) {
         $company = array();
-        $agreement = array();
-        $cw_agreement = $connection->getAgreement($connection->cw_agreement);
         $cw_company = $connection->getCompanyById($connection->cw_company_id);
         if (!is_null($cw_company)) {
             $company = array($cw_company->Id => $cw_company->CompanyName);
         }
+        return $company;
+    }
+
+    public function getConnectionAgreementSelectDefault(Connection $connection) {
+        $agreement = array();
+        $cw_agreement = $connection->getAgreement($connection->cw_agreement);
         if (!is_null($cw_agreement)) {
             $agreement = array($cw_agreement->Id => $cw_agreement->AgreementName);
         }
-        return view('admin.connections.edit', compact('connection', 'company', 'agreement'));
+        return $agreement;
     }
 
     /**
@@ -100,8 +120,8 @@ class ConnectionsController extends Controller
     {
         $connection->update($request->all());
         return redirect("connections/{$connection->id}")->with([
-            'flash_message' => TRUE,
-            'flash_message_success' => "Connection \"{$connection->jira_project_key}\" has been updated"
+            'message' => "Connection \"{$connection->jira_project_key}\" has been updated",
+            'alert-class' => "alert-success"
         ]);
     }
 
@@ -115,8 +135,8 @@ class ConnectionsController extends Controller
     {
         $connection->delete();
         return redirect('connections')->with([
-            'flash_message' => TRUE,
-            'flash_message_danger' => "Connection \"{$connection->jira_project_key}\" has been deleted"
+            'message' => "Connection \"{$connection->jira_project_key}\" has been deleted",
+            'alert-class' => "alert-warning"
         ]);
     }
 

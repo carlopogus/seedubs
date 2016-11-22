@@ -8,6 +8,9 @@
 
     <div class="panel panel-default">
         <div class="panel-body">
+        @if(Session::has('message'))
+            <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ Session::get('message') }}</p>
+        @endif
             {!! Form::open([ 'action' => [ 'ConnectionsController@destroy', $connection ], 'method' => 'delete', 'class' => 'pull-right' ]) !!}
             <a href="{{ action('ConnectionsController@edit', [$connection->id]) }}" class="btn btn-primary btn-xs" >Edit</a>
             {!! Form::submit('Delete', ['class' => 'btn btn-danger btn-xs']) !!}
@@ -25,11 +28,11 @@
                 </tr>
                 <tr>
                     <td><label>CW Company Id</label></td>
-                    <td>{{ $connection->cw_company_id }}</td>
+                    <td>{{ $connection->cw_company_name }}</td>
                 </tr>
                 <tr>
                     <td><label>CW Agreement</label></td>
-                    <td>{{ $connection->cw_agreement }}</td>
+                    <td>{{ $connection->cw_agreement_name }}</td>
                 </tr>
                 <tr>
                     <td><label>CW Service Board</label></td>
