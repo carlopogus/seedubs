@@ -5,22 +5,22 @@
 
 <div class="form-group">
     {!! Form::label('cw_company_id', 'CW Company Id:') !!}
-    {!! Form::text('cw_company_id', null, ['class' => 'form-control']) !!}
+    {!! Form::select('cw_company_id', $company, null, ['class' => 'form-control select-ajax--cw-company']) !!}
 </div>
 
 <div class="form-group">
     {!! Form::label('cw_agreement', 'CW Agreement:') !!}
-    {!! Form::text('cw_agreement', null, ['class' => 'form-control']) !!}
+    {!! Form::select('cw_agreement', $agreement, null, ['class' => 'form-control select-ajax--cw-agreement']) !!}
 </div>
 
 <div class="form-group">
     {!! Form::label('cw_service_board', 'Service Board:') !!}
-    {!! Form::text('cw_service_board', null, ['class' => 'form-control']) !!}
+    {!! Form::text('cw_service_board', 'Help Desk', ['class' => 'form-control']) !!}
 </div>
 
 <div class="form-group">
     {!! Form::label('cw_ticket_priority', 'Ticket Priority:') !!}
-    {!! Form::text('cw_ticket_priority', null, ['class' => 'form-control']) !!}
+    {!! Form::text('cw_ticket_priority', 'Priority 5 - No SLA', ['class' => 'form-control']) !!}
 </div>
 
 <div class="form-group">

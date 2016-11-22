@@ -21,6 +21,10 @@ Route::get('admin/settings', 'SettingsController@index')->name('settings');
 
 Route::post('admin/settings', 'SettingsController@update');
 
+
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('connections', 'ConnectionsController');
+    Route::get('find-companies', 'ConnectionsController@findCompanies');
+    Route::get('find-agreements', 'ConnectionsController@findAgreements');
 });
+

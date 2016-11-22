@@ -37,7 +37,9 @@ class ConnectionsController extends Controller
      */
     public function create()
     {
-        return view('admin.connections.create');
+        $company = array();
+        $agreement = array();
+        return view('admin.connections.create', compact('company', 'agreement'));
     }
 
     /**
@@ -74,7 +76,17 @@ class ConnectionsController extends Controller
      */
     public function edit(Connection $connection)
     {
-        return view('admin.connections.edit', compact('connection'));
+        $company = array();
+        $agreement = array();
+        $cw_agreement = $connection->getAgreement($connection->cw_agreement);
+        $cw_company = $connection->getCompanyById($connection->cw_company_id);
+        if (!is_null($cw_company)) {
+            $company = array($cw_company->Id => $cw_company->CompanyName);
+        }
+        if (!is_null($cw_agreement)) {
+            $agreement = array($cw_agreement->Id => $cw_agreement->AgreementName);
+        }
+        return view('admin.connections.edit', compact('connection', 'company', 'agreement'));
     }
 
     /**
@@ -120,5 +132,21 @@ class ConnectionsController extends Controller
         // var_export($data);
         $data_arr = json_encode(json_decode($data));
         var_export($data_arr);
+    }
+
+    public function findCompanies(Request $request)
+    {
+        $q = empty($request->all()['q']) ? '' : $request->all()['q'];
+        $connection = new Connection;
+        $companys = $connection->FindCompanies($q, 10);
+        return response()->json($companys);
+    }
+
+    public function findAgreements(Request $request)
+    {
+        $q = empty($request->all()['q']) ? '' : $request->all()['q'];
+        $connection = new Connection;
+        $companys = $connection->FindAgreements((int)$q, 10);
+        return response()->json($companys);
     }
 }
