@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use App\Http\Requests\ConnectionRequest;
 use Illuminate\Http\Request;
 use App\Connection;
+use Illuminate\Support\Facades\Cache;
+use App\Setting;
 
 class ConnectionsController extends Controller
 {
@@ -39,7 +41,8 @@ class ConnectionsController extends Controller
     {
         $company = array();
         $agreement = array();
-        return view('admin.connections.create', compact('company', 'agreement'));
+        $project = array();
+        return view('admin.connections.create', compact('company', 'agreement', 'project'));
     }
 
     /**
@@ -86,9 +89,10 @@ class ConnectionsController extends Controller
      */
     public function edit(Connection $connection)
     {
+        $project = array($connection->jira_project_key => $connection->jira_project_key);
         $company = $this->getConnectionCompanySelectDefault($connection);
         $agreement = $this->getConnectionAgreementSelectDefault($connection);
-        return view('admin.connections.edit', compact('connection', 'company', 'agreement'));
+        return view('admin.connections.edit', compact('connection', 'company', 'agreement', 'project'));
     }
 
     public function getConnectionCompanySelectDefault(Connection $connection) {
@@ -140,8 +144,8 @@ class ConnectionsController extends Controller
         ]);
     }
 
-        /**
-     * Store a newly created resource in storage.
+    /**
+     * Intercept jira data sent via webhooks.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -169,4 +173,35 @@ class ConnectionsController extends Controller
         $companys = $connection->FindAgreements((int)$q, 10);
         return response()->json($companys);
     }
+
+    public function jiraProjects(Request $request) {
+
+        $q = empty($request->all()['q']) ? '' : $request->all()['q'];
+        $expiresAt = Carbon::now()->addHours(12);
+        $projects = Cache::remember('jiraProjects', $expiresAt, function() {
+            return $this->jiraProjectsRequest();
+        });
+
+        if (!empty($q)) {
+            $projects = array_filter($projects, function($var) use ($q){
+                return strpos(strtolower($var->name), strtolower($q)) !== FALSE;
+            });
+        }
+
+        return response()->json($projects);
+    }
+
+    public function jiraProjectsRequest() {
+        $jira_host = Setting::key('jira_host')->first()->value;
+        $jira_api = Setting::key('jira_api')->first()->value;
+        $jira_username = Setting::key('jira_username')->first()->value;
+        $jira_password = Setting::key('jira_password')->first()->value;
+        $client = new \GuzzleHttp\Client();
+        $res = $client->request('GET', $jira_host . '/' . $jira_api . '/project', [
+            'auth' => [$jira_username, $jira_password]
+        ]);
+        $body = $res->getBody();
+        return json_decode($body);
+    }
+
 }

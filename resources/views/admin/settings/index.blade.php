@@ -10,6 +10,15 @@
 
 <div class="panel panel-default">
   <div class="panel-body">
+    @if (count($errors) > 0)
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
 <table class="table">
     <tr>
         <th>Name</th>
@@ -22,7 +31,7 @@
     </tr>
     @endforeach
 </table>
-{!! Form::submit('Save', ['class' => 'btn btn-default']) !!}
+{!! Form::submit('Save Settings', ['class' => 'btn btn-primary pull-left']) !!}
 {!! Form::close() !!}
 </div></div>
 

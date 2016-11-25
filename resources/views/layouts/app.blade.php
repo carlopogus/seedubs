@@ -22,6 +22,14 @@
     </script>
 </head>
 <body>
+@if(Session::has('message'))
+      <div class="alert global-alert {{ Session::get('alert-class', 'alert-info') }} alert-dismissible fade in" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+        <p>{{ Session::get('message') }}</p>
+      </div>
+      @endif
     <div id="app">
         @include('layouts.nav')
         @yield('content')

@@ -5766,4 +5766,10 @@ button.close {
   .hidden-print {
     display: none !important; } }
 
+.form-group select {
+  width: 100%; }
+
+.global-alert {
+  margin-bottom: 0; }
+
 /*# sourceMappingURL=app.css.map */

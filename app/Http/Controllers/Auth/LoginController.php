@@ -36,4 +36,14 @@ class LoginController extends Controller
     {
         $this->middleware('guest', ['except' => 'logout']);
     }
+
+    /**
+    * Override the username method used to validate login
+    * https://laracasts.com/discuss/channels/general-discussion/login-by-username-in-laravel-53?page=1
+    * @return string
+    */
+    public function username()
+    {
+        return 'name';
+    }
 }

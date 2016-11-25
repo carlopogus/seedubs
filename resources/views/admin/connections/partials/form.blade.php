@@ -1,6 +1,16 @@
+@if (count($errors) > 0)
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <div class="form-group">
     {!! Form::label('jira_project_key', 'Jira Project Key:') !!}
-    {!! Form::text('jira_project_key', null, ['class' => 'form-control']) !!}
+    {!! Form::select('jira_project_key', $project, null, ['class' => 'form-control select-ajax--jira-project']) !!}
 </div>
 
 <div class="form-group">
@@ -24,5 +34,5 @@
 </div>
 
 <div class="form-group">
-    {!! Form::submit($submitButtonText, ['class' => 'btn btn-primary form-control']) !!}
+    {!! Form::submit($submitButtonText, ['class' => 'btn btn-primary pull-left']) !!}
 </div>

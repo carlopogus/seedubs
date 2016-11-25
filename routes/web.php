@@ -24,7 +24,9 @@ Route::post('admin/settings', 'SettingsController@update');
 
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('connections', 'ConnectionsController');
-    Route::get('find-companies', 'ConnectionsController@findCompanies');
-    Route::get('find-agreements', 'ConnectionsController@findAgreements');
+    Route::get('ajax/find-companies', 'ConnectionsController@findCompanies');
+    Route::get('ajax/find-agreements', 'ConnectionsController@findAgreements');
+    Route::get('ajax/jira-projects', 'ConnectionsController@jiraProjects');
 });
+
 

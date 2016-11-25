@@ -10,14 +10,14 @@
 <h1>Edit Connection</h1>
 <hr>
 
-{!! Form::model($connection, ['method' => 'PUT', 'action' => ['ConnectionsController@update', $connection->id]]) !!}
+{!! Form::model($connection, ['method' => 'PUT', 'action' => ['ConnectionsController@update', $connection->id], 'id' => 'edit-form']) !!}
 
     @include('admin.connections.partials.form', ['submitButtonText' => 'Update Connection'])
 
 {!! Form::close() !!}
 
 {!! Form::open([ 'action' => [ 'ConnectionsController@destroy', $connection ], 'method' => 'delete', 'class' => 'pull-right' ]) !!}
-{!! Form::submit('Delete', ['class' => 'btn btn-danger btn-xs']) !!}
+{!! Form::submit('Delete', ['class' => 'btn btn-danger']) !!}
 {!! Form::close() !!}
 
 </div>

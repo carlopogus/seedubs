@@ -7,3 +7,5 @@ Homestead.json
 Homestead.yaml
 .env
 database.sqlite
+.vagrant
+Vagrantfile

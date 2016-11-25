@@ -48,6 +48,11 @@ class SettingsController extends Controller
         // dd($request->except('_token'));
         // $article = Article::findOrFail($id);
         // $article->update($request->all());
-        return redirect()->route('settings', compact('id'));
+        // return redirect()->route('settings', compact('id'));
+
+        return redirect('admin/settings')->with([
+            'message' => "Settings have been updated.",
+            'alert-class' => "alert-success"
+        ]);
     }
 }

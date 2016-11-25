@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
 {
+    protected $primarykey = 'name';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -14,4 +16,8 @@ class Setting extends Model
     protected $fillable = [
         'name', 'value',
     ];
+
+    public function scopeKey($query, $name) {
+      return $query->where('name', $name);
+    }
 }
