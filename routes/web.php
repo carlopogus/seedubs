@@ -17,10 +17,11 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index');
 
-Route::get('admin/settings', 'SettingsController@index')->name('settings');
+Route::get('settings/api', 'SettingsController@index')->name('settings');
+Route::post('settings/api', 'SettingsController@update');
 
-Route::post('admin/settings', 'SettingsController@update');
-
+Route::get('settings/performance', 'SettingsController@performance');
+Route::post('settings/performance', 'SettingsController@clearCache');
 
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('connections', 'ConnectionsController');

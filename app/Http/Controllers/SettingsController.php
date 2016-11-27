@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Setting;
+use Illuminate\Support\Facades\Cache;
 
 class SettingsController extends Controller
 {
@@ -14,7 +15,7 @@ class SettingsController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+      $this->middleware('auth');
     }
 
     /**
@@ -26,7 +27,7 @@ class SettingsController extends Controller
     {
       $settings = Setting::all();
       // dd($settings);
-        return view('admin.settings.index', compact('settings'));
+      return view('admin.settings.index', compact('settings'));
     }
 
     /**
@@ -37,22 +38,32 @@ class SettingsController extends Controller
      */
     public function update(Request $request)
     {
-        $settings = $request->except('_token');
+      $settings = $request->except('_token');
 
-        foreach ($settings as $name => $value) {
-          \DB::table('settings')
-            ->where('name', $name)
-            ->update(['value' => $value]);
-        }
+      foreach ($settings as $name => $value) {
+        $setting = Setting::key($name)->first();
+        $setting->value = $value;
+        $setting->save();
+      }
 
-        // dd($request->except('_token'));
-        // $article = Article::findOrFail($id);
-        // $article->update($request->all());
-        // return redirect()->route('settings', compact('id'));
-
-        return redirect('admin/settings')->with([
-            'message' => "Settings have been updated.",
-            'alert-class' => "alert-success"
+      return redirect('settings/api')->with([
+        'message' => "Settings have been updated.",
+        'alert-class' => "alert-success"
         ]);
     }
-}
+
+    public function performance()
+    {
+      return view('admin.settings.performance');
+    }
+
+    public function clearCache()
+    {
+      Cache::flush();
+      return redirect('settings/performance')->with([
+        'message' => "All caches have been cleared",
+        'alert-class' => "alert-success"
+        ]);
+    }
+
+  }
