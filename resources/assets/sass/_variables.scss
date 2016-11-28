@@ -8,8 +8,10 @@ $list-group-border: $laravel-border-color;
 $navbar-default-border: $laravel-border-color;
 $panel-default-border: $laravel-border-color;
 $panel-inner-border: $laravel-border-color;
+$border-radius-base: 0;
 
 // Brands
+$state-success-bg: #9fc190;
 $brand-primary: #3097D1;
 $brand-info: #8eb4cb;
 $brand-success: #2ab27b;
@@ -24,6 +26,16 @@ $text-color: #636b6f;
 
 // Navbar
 $navbar-default-bg: #303940;
+$navbar-default-link-color: #c1c1c1;
+$navbar-default-link-hover-color: #f1f1f1;
+$navbar-default-link-active-color: $navbar-default-link-hover-color;
+
+// Dropdowns
+$dropdown-bg: $navbar-default-bg;
+$dropdown-link-hover-bg: darken($navbar-default-bg, 6.5%);
+$dropdown-link-color: $navbar-default-link-color;
+$dropdown-link-hover-color: $navbar-default-link-hover-color;
+$dropdown-border: $dropdown-bg;
 
 // Buttons
 $btn-default-color: $text-color;
