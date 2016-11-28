@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('styles')
-    <link href="/css/select2.min.css" rel="stylesheet">
+    <link href="/libs/select2/select2.min.css" rel="stylesheet">
 @endsection
 
 @section('content')
@@ -24,6 +24,6 @@
 @endsection
 
 @section('scripts')
-    <script src="/js/select2.min.js"></script>
+    <script src="/libs/select2/select2.min.js"></script>
     <script src="/js/connections.form.js"></script>
 @endsection
