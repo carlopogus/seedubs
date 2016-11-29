@@ -39,9 +39,8 @@ class SettingsController extends Controller
     public function update(Request $request)
     {
       $settings = $request->except('_token');
-
       foreach ($settings as $name => $value) {
-        $setting = Setting::key($name)->first();
+        $setting = Setting::find($name);
         $setting->value = $value;
         $setting->save();
       }

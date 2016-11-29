@@ -14,25 +14,72 @@ class SettingsTableSeeder extends Seeder
     {
 
       $rows = array(
-        'cw_host',
-        'cw_release',
-        'cw_api_version',
-        'cw_COID',
-        'cw_username',
-        'cw_password',
-        'jira_host',
-        'jira_api',
-        'jira_username',
-        'jira_password',
-        'jira_cw_field',
+        'cw_host' => array(
+          'value' => '',
+          'name' => 'Connectwise Host URL',
+          'description' => ''
+        ),
+        'cw_release' => array(
+          'value' => '',
+          'name' => 'Connectwise API Release',
+          'description' => ''
+        ),
+        'cw_api_version' => array(
+          'value' => '',
+          'name' => 'Connectwise API Version',
+          'description' => ''
+        ),
+        'cw_COID' => array(
+          'value' => '',
+          'name' => 'Connectwise Company ID',
+          'description' => ''
+        ),
+        'cw_api_key' => array(
+          'value' => '',
+          'name' => 'Connectwise API Key',
+          'description' => ''
+        ),
+        'cw_api_secret' => array(
+          'value' => '',
+          'name' => 'Connectwise API Secret',
+          'description' => ''
+        ),
+        // 'cw_username' => array(),
+        // 'cw_password' => array(),
+        'jira_host' => array(
+          'value' => '',
+          'name' => 'Jira Host URL',
+          'description' => ''
+        ),
+        'jira_api_version' => array(
+          'value' => '',
+          'name' => 'Jira API Version',
+          'description' => ''
+        ),
+        'jira_username' => array(
+          'value' => '',
+          'name' => 'Jira Username',
+          'description' => ''
+        ),
+        'jira_password' => array(
+          'value' => '',
+          'name' => 'Jira Password',
+          'description' => ''
+        ),
+        'jira_cw_field' => array(
+          'value' => '',
+          'name' => 'Jira Connectwise Field',
+          'description' => ''
+        ),
       );
 
-      foreach ($rows as $row) {
-        $exists = App\Setting::where('name', $row)->exists();
+      foreach ($rows as $row => $values) {
+        $exists = App\Setting::where('key', $row)->exists();
         if (!$exists) {
           DB::table('settings')->insert([
-            'name' => $row,
-            'value' => '',
+            'key' => $row,
+            'value' => $values['value'],
+            'name' => $values['name'],
           ]);
         }
       }

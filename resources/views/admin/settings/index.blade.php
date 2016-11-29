@@ -26,8 +26,8 @@
     </tr>
     @foreach($settings as $setting)
     <tr class="form-group">
-        <td>{!! Form::label($setting->name, $setting->name) !!}</td>
-        <td>{!! Form::text($setting->name, $setting->value, ['class' => 'form-control']) !!}</td>
+        <td>{!! Form::label($setting->key, $setting->name) !!}</td>
+        <td>{!! Form::text($setting->key, $setting->value, ['class' => 'form-control']) !!}</td>
     </tr>
     @endforeach
 </table>
