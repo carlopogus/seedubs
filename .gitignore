@@ -1,6 +1,7 @@
 /node_modules
 /public/storage
 /public/css
+/public/js
 /storage/*.key
 /vendor
 /.idea
@@ -10,3 +11,4 @@ Homestead.yaml
 database.sqlite
 .vagrant
 Vagrantfile
+*.DS_Store

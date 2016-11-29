@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
 
-<h1>Admin Settings</h1>
+<h1>API Settings</h1>
 <hr>
 <!-- {!! Form::open(['action' => 'SettingsController@update']) !!} -->
 {!! Form::model(['action' => 'SettingsController@update']) !!}
@@ -19,7 +19,7 @@
         </ul>
     </div>
     @endif
-<table class="table">
+<table class="table table-striped">
     <tr>
         <th>Name</th>
         <th>Value</th>

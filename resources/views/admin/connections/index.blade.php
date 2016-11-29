@@ -3,12 +3,12 @@
 @section('content')
 <div class="container">
 
-  <h1>Connections</h1>
+  <h1>Manage Connections</h1>
   <hr>
   <div class="panel panel-default">
     <div class="panel-body">
 
-      <table class="table">
+      <table class="table table-striped">
         <tr>
           <th>#</th>
           <th>Jira Project Key</th>

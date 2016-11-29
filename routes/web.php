@@ -11,11 +11,11 @@
 |
 */
 
-Route::get('/', 'HomeController@index');
+Route::get('/', 'ConnectionsController@index');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index');
+Route::get('/home', 'ConnectionsController@index');
 
 Route::get('settings/api', 'SettingsController@index')->name('settings');
 Route::post('settings/api', 'SettingsController@update');

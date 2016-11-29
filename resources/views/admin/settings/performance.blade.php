@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
 
-  <h1>Performance</h1>
+  <h1>Performance Settings</h1>
   <hr>
 
   <div class="panel panel-default">

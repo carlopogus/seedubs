@@ -10,6 +10,9 @@
 <h1>Edit Connection</h1>
 <hr>
 
+  <div class="panel panel-default">
+    <div class="panel-body">
+
 {!! Form::model($connection, ['method' => 'PUT', 'action' => ['ConnectionsController@update', $connection->id], 'id' => 'edit-form']) !!}
 
     @include('admin.connections.partials.form', ['submitButtonText' => 'Update Connection'])
@@ -21,6 +24,7 @@
 {!! Form::close() !!}
 
 </div>
+</div></div>
 @endsection
 
 @section('scripts')

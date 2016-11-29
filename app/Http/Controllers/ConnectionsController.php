@@ -28,8 +28,8 @@ class ConnectionsController extends Controller
      */
     public function index()
     {
-        $connections = Connection::orderBy('jira_project_key', 'desc')->get();
-        return view('admin.connections.index', compact('connections'));
+      $connections = Connection::orderBy('jira_project_key', 'desc')->get();
+      return view('admin.connections.index', compact('connections'));
     }
 
     /**
@@ -39,10 +39,10 @@ class ConnectionsController extends Controller
      */
     public function create()
     {
-        $company = array();
-        $agreement = array();
-        $project = array();
-        return view('admin.connections.create', compact('company', 'agreement', 'project'));
+      $company = array();
+      $agreement = array();
+      $project = array();
+      return view('admin.connections.create', compact('company', 'agreement', 'project'));
     }
 
     /**
@@ -53,10 +53,10 @@ class ConnectionsController extends Controller
      */
     public function store(ConnectionRequest $request)
     {
-        $connection = Connection::create($request->all());
-        return redirect('connections')->with([
-            'message' => "Connection \"{$request->all()['jira_project_key']}\" has been created",
-            'alert-class' => "alert-success"
+      $connection = Connection::create($request->all());
+      return redirect('connections')->with([
+        'message' => "Connection \"{$request->all()['jira_project_key']}\" has been created",
+        'alert-class' => "alert-success"
         ]);
     }
 
@@ -69,16 +69,16 @@ class ConnectionsController extends Controller
     public function show(Connection $connection)
     {
 
-        $cw_company = $connection->getCompanyById($connection->cw_company_id);
-        if (!is_null($cw_company)) {
-            $connection->cw_company_name = $cw_company->CompanyName;
-        }
-        $cw_agreement = $connection->getAgreement($connection->cw_agreement);
-        if (!is_null($cw_agreement)) {
-            $connection->cw_agreement_name = $cw_agreement->AgreementName;
-        }
+      $cw_company = $connection->getCompanyById($connection->cw_company_id);
+      if (!is_null($cw_company)) {
+        $connection->cw_company_name = $cw_company->CompanyName;
+      }
+      $cw_agreement = $connection->getAgreement($connection->cw_agreement);
+      if (!is_null($cw_agreement)) {
+        $connection->cw_agreement_name = $cw_agreement->AgreementName;
+      }
 
-        return view('admin.connections.show', compact('connection'));
+      return view('admin.connections.show', compact('connection'));
     }
 
     /**
@@ -89,28 +89,56 @@ class ConnectionsController extends Controller
      */
     public function edit(Connection $connection)
     {
-        $project = array($connection->jira_project_key => $connection->jira_project_key);
-        $company = $this->getConnectionCompanySelectDefault($connection);
-        $agreement = $this->getConnectionAgreementSelectDefault($connection);
-        return view('admin.connections.edit', compact('connection', 'company', 'agreement', 'project'));
+      $project = array($connection->jira_project_key => $connection->jira_project_key);
+      $company = $this->getConnectionCompanySelectDefault($connection);
+      $agreement = $this->getConnectionAgreementSelectDefault($connection);
+      $boards = $this->getConnectionServiceBoardSelectDefault($connection);
+      return view('admin.connections.edit', compact('connection', 'company', 'agreement', 'project'));
     }
 
+    /**
+     * return cw company for connection.
+     *
+     * @param  \App\Connection
+     * @return array
+     */
+    public function getConnectionServiceBoardSelectDefault(Connection $connection) {
+      $boards = array();
+      $cw_company = $connection->getCompanyById($connection->cw_company_id);
+      if (!is_null($cw_company)) {
+        $company = array($cw_company->Id => $cw_company->CompanyName);
+      }
+      return $company;
+    }
+
+    /**
+     * return cw company for connection.
+     *
+     * @param  \App\Connection
+     * @return array
+     */
     public function getConnectionCompanySelectDefault(Connection $connection) {
-        $company = array();
-        $cw_company = $connection->getCompanyById($connection->cw_company_id);
-        if (!is_null($cw_company)) {
-            $company = array($cw_company->Id => $cw_company->CompanyName);
-        }
-        return $company;
+      $company = array();
+      $cw_company = $connection->getCompanyById($connection->cw_company_id);
+      if (!is_null($cw_company)) {
+        $company = array($cw_company->Id => $cw_company->CompanyName);
+      }
+      return $company;
     }
 
+    /**
+     * return cw agreement for connection.
+     *
+     * @param  \App\Connection
+     * @return array
+     */
     public function getConnectionAgreementSelectDefault(Connection $connection) {
-        $agreement = array();
-        $cw_agreement = $connection->getAgreement($connection->cw_agreement);
-        if (!is_null($cw_agreement)) {
-            $agreement = array($cw_agreement->Id => $cw_agreement->AgreementName);
-        }
-        return $agreement;
+      $agreement = array();
+      $cw_agreement = $connection->getAgreement($connection->cw_agreement);
+      if (!is_null($cw_agreement)) {
+        $agreement = array($cw_agreement->Id => $cw_agreement->AgreementName);
+      }
+      return $agreement;
     }
 
     /**
@@ -122,10 +150,10 @@ class ConnectionsController extends Controller
      */
     public function update(Connection $connection, ConnectionRequest $request)
     {
-        $connection->update($request->all());
-        return redirect("connections/{$connection->id}")->with([
-            'message' => "Connection \"{$connection->jira_project_key}\" has been updated",
-            'alert-class' => "alert-success"
+      $connection->update($request->all());
+      return redirect("connections/{$connection->id}")->with([
+        'message' => "Connection \"{$connection->jira_project_key}\" has been updated",
+        'alert-class' => "alert-success"
         ]);
     }
 
@@ -137,10 +165,10 @@ class ConnectionsController extends Controller
      */
     public function destroy(Connection $connection)
     {
-        $connection->delete();
-        return redirect('connections')->with([
-            'message' => "Connection \"{$connection->jira_project_key}\" has been deleted",
-            'alert-class' => "alert-warning"
+      $connection->delete();
+      return redirect('connections')->with([
+        'message' => "Connection \"{$connection->jira_project_key}\" has been deleted",
+        'alert-class' => "alert-warning"
         ]);
     }
 
@@ -152,56 +180,54 @@ class ConnectionsController extends Controller
      */
     public function jiraPost(Request $request)
     {
-        $data = $request->getContent();
+      $data = $request->getContent();
         // var_export($data);
-        $data_arr = json_encode(json_decode($data));
-        var_export($data_arr);
+      $data_arr = json_encode(json_decode($data));
+      var_export($data_arr);
     }
 
+    /**
+     * Display json object of cw companies.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function findCompanies(Request $request)
     {
-        $q = empty($request->all()['q']) ? '' : $request->all()['q'];
-        $connection = new Connection;
-        $companys = $connection->FindCompanies($q, 10);
-        return response()->json($companys);
+      $q = empty($request->all()['q']) ? '' : $request->all()['q'];
+      $connection = new Connection;
+      $companys = $connection->FindCompanies($q, 10);
+      return response()->json($companys);
     }
 
+    /**
+     * Display json object of cw agreements.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function findAgreements(Request $request)
     {
-        $q = empty($request->all()['q']) ? '' : $request->all()['q'];
-        $connection = new Connection;
-        $companys = $connection->FindAgreements((int)$q, 10);
-        return response()->json($companys);
+      $q = empty($request->all()['q']) ? '' : $request->all()['q'];
+      $connection = new Connection;
+      $companys = $connection->FindAgreements((int)$q, 10);
+      return response()->json($companys);
     }
 
-    public function jiraProjects(Request $request) {
-
-        $q = empty($request->all()['q']) ? '' : $request->all()['q'];
-        $expiresAt = Carbon::now()->addHours(12);
-        $projects = Cache::remember('jiraProjects', $expiresAt, function() {
-            return $this->jiraProjectsRequest();
+    /**
+     * Display json object of jira projects
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function jiraProjects(Request $request, Setting $setting) {
+      $projects = $setting->getJiraProjects();
+      if ($q = empty($request->all()['q']) ? '' : $request->all()['q']) {
+        $projects = array_filter($projects, function($var) use ($q){
+          return strpos(strtolower($var->name), strtolower($q)) !== FALSE;
         });
-
-        if (!empty($q)) {
-            $projects = array_filter($projects, function($var) use ($q){
-                return strpos(strtolower($var->name), strtolower($q)) !== FALSE;
-            });
-        }
-
-        return response()->json($projects);
+      }
+      return $projects;
     }
 
-    public function jiraProjectsRequest() {
-        $jira_host = Setting::key('jira_host')->first()->value;
-        $jira_api = Setting::key('jira_api')->first()->value;
-        $jira_username = Setting::key('jira_username')->first()->value;
-        $jira_password = Setting::key('jira_password')->first()->value;
-        $client = new \GuzzleHttp\Client();
-        $res = $client->request('GET', $jira_host . '/' . $jira_api . '/project', [
-            'auth' => [$jira_username, $jira_password]
-        ]);
-        $body = $res->getBody();
-        return json_decode($body);
-    }
-
-}
+  }
