@@ -29,6 +29,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('ajax/find-cw-companies', 'ConnectionsController@findCwCompanies');
     Route::get('ajax/find-cw-agreements', 'ConnectionsController@findCwAgreements');
     Route::get('ajax/get-cw-service-boards', 'ConnectionsController@getCwServiceBoards');
+    Route::get('ajax/get-cw-board-statuses', 'ConnectionsController@getCwBoardStatuses');
     Route::get('ajax/get-jira-projects', 'ConnectionsController@getJiraProjects');
 });
 

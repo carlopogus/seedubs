@@ -245,6 +245,22 @@ class ConnectionsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    public function getCwBoardStatuses(Request $request)
+    {
+      $q = empty($request->all()['q']) ? '' : $request->all()['q'];
+      $expires = Carbon::now()->addWeek();
+      $statuses = Cache::remember('cw_service_boards_status_' . $q, $expires, function () use ($q) {
+          return $this->connectwise->get("service/boards/$q/statuses");
+      });
+      return $statuses;
+    }
+
+    /**
+     * Display json object of cw agreements.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function getCwServiceBoards()
     {
       $expires = Carbon::now()->addWeek();

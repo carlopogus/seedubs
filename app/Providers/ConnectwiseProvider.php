@@ -37,7 +37,13 @@ class ConnectwiseProvider extends ServiceProvider {
     $url = $this->constructRequestUrl()->requestUrl;
     $headers = $this->buildHeaders($action, $data);
     $client = new \GuzzleHttp\Client(['base_uri' => $url]);
-    $res = $client->request($action, $endpoint, $headers);
+    // dd($client);
+    try {
+      $res = $client->request($action, $endpoint, $headers);
+    } catch (\GuzzleHttp\Exception\ClientException $e) {
+      $response = $e->getResponse();
+      return $response->getBody();
+    }
     return json_decode($res->getBody());
   }
 
