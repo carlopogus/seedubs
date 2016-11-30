@@ -1,18 +1,18 @@
 <?php
 
 namespace App\Providers;
+
 use Illuminate\Support\ServiceProvider;
 
-class ConnectwiseProvider extends ServiceProvider {
+class JiraServiceProvider extends ServiceProvider
+{
 
   public $requestUrl;
 
-  public $cw_host;
-  public $cw_release;
-  public $cw_api_version;
-  public $cw_COID;
-  public $cw_api_key;
-  public $cw_api_secret;
+  public $jira_host;
+  public $jira_api_version;
+  public $jira_username;
+  public $jira_password;
 
   public function __construct() {
 
@@ -24,10 +24,9 @@ class ConnectwiseProvider extends ServiceProvider {
    * @return this.
    */
   private function constructRequestUrl() {
-    $this->requestUrl = 'https://' . $this->cw_host . '/' . $this->cw_release . '/apis/' . $this->cw_api_version . '/';
+    $this->requestUrl = 'https://' . $this->jira_host . '/rest/api/' . $this->jira_api_version . '/';
     return $this;
   }
-
   /**
    * Make the call to the connectwise api.
    *
@@ -51,6 +50,29 @@ class ConnectwiseProvider extends ServiceProvider {
   }
 
   /**
+   * Build the query to send with the request.
+   *
+   * @return object
+   */
+  private function buildHeadersAuth(&$headers) {
+    $headers['auth'] = [$this->jira_username, $this->jira_password];
+  }
+
+    /**
+   * Build the query to send with the request.
+   *
+   * @return object
+   */
+  private function buildHeadersData(&$headers, $action, $data) {
+    switch ($action) {
+      case 'GET':
+        $conditions = implode(' and ', $data);
+        $headers['query'] = ['jql' => $conditions];
+      break;
+    }
+  }
+
+  /**
    * Build request headers.
    *
    * @return array
@@ -64,50 +86,23 @@ class ConnectwiseProvider extends ServiceProvider {
     return $headers;
   }
 
-  /**
-   * Build the query to send with the request.
-   *
-   * @return object
-   */
-  private function buildHeadersAuth(&$headers) {
-    $user = $this->cw_COID . '+' . $this->cw_api_key;
-    $pass = $this->cw_api_secret;
-    $headers['auth'] = [$user, $pass];
-  }
+    /**
+     * Bootstrap the application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        //
+    }
 
-  /**
-   * Build the query to send with the request.
-   *
-   * @return object
-   */
-  private function buildHeadersData(&$headers, $action, $data) {
-    switch ($action) {
-      case 'GET':
-        $conditions = implode(' and ', $data);
-        $headers['query'] = ['conditions' => $conditions];
-      break;
+    /**
+     * Register the application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        //
     }
   }
-
-  /**
-   * Bootstrap any application services.
-   *
-   * @return void
-   */
-  public function boot()
-  {
-
-  }
-
-  /**
-   * Register any application services.
-   *
-   * @return void
-   */
-  public function register()
-  {
-
-  }
-}
-
-?>

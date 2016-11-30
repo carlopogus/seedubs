@@ -185,6 +185,11 @@ return [
          */
         App\Providers\ConnectwiseProvider::class,
 
+        /*
+         * Jira API Service.
+         */
+        App\Providers\JiraServiceProvider::class,
+
     ],
 
     /*

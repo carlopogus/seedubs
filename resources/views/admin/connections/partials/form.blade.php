@@ -25,12 +25,12 @@
 
 <div class="form-group">
     {!! Form::label('cw_service_board', 'Service Board:') !!}
-    {!! Form::text('cw_service_board', 'Help Desk', ['class' => 'form-control']) !!}
+    {!! Form::select('cw_service_board', $boards, $connection->cw_company_id, ['class' => 'form-control select-ajax--cw-boards']) !!}
 </div>
 
 <div class="form-group">
     {!! Form::label('cw_ticket_priority', 'Ticket Priority:') !!}
-    {!! Form::text('cw_ticket_priority', 'Priority 5 - No SLA', ['class' => 'form-control']) !!}
+    {!! Form::select('cw_ticket_priority', $priorities, $connection->cw_ticket_priority, ['class' => 'form-control select-ajax--cw-priority']) !!}
 </div>
 
 <div class="form-group">

@@ -16,6 +16,7 @@ Route::get('/', 'ConnectionsController@index');
 Auth::routes();
 
 Route::get('/home', 'ConnectionsController@index');
+Route::get('/test', 'ConnectionsController@test');
 
 Route::get('settings/api', 'SettingsController@index')->name('settings');
 Route::post('settings/api', 'SettingsController@update');
@@ -25,9 +26,10 @@ Route::post('settings/performance', 'SettingsController@clearCache');
 
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('connections', 'ConnectionsController');
-    Route::get('ajax/find-companies', 'ConnectionsController@findCompanies');
-    Route::get('ajax/find-agreements', 'ConnectionsController@findAgreements');
-    Route::get('ajax/jira-projects', 'ConnectionsController@jiraProjects');
+    Route::get('ajax/find-cw-companies', 'ConnectionsController@findCwCompanies');
+    Route::get('ajax/find-cw-agreements', 'ConnectionsController@findCwAgreements');
+    Route::get('ajax/get-cw-service-boards', 'ConnectionsController@getCwServiceBoards');
+    Route::get('ajax/get-jira-projects', 'ConnectionsController@getJiraProjects');
 });
 
 
