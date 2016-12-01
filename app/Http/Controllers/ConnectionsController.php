@@ -35,7 +35,7 @@ class ConnectionsController extends Controller
       $jira->jira_password = $settings['jira_password'];
       $jira->jira_cw_field = $settings['jira_cw_field'];
       $this->jira = $jira;
-        // $this->middleware('auth');
+        $this->middleware('auth');
     }
 
     /**
@@ -64,8 +64,13 @@ class ConnectionsController extends Controller
       $company = array();
       $agreement = array();
       $project = array();
-      $boards = array();
-      $priorities = array();
+      $boards = array('' => 'Select a service board');
+      $priorities = array('' => 'Select a ticket priority');
+      $jira_statuses = array('' => 'Select a Jira status');
+
+      foreach ($this->getJiraStatuses() as $status) {
+        $jira_statuses[$status->id] = $status->name;
+      }
 
       foreach ($this->getCwServiceBoards() as $board) {
         $boards[$board->id] = $board->name;
@@ -75,7 +80,7 @@ class ConnectionsController extends Controller
         $priorities[$priority->id] = $priority->name;
       }
 
-      return view('admin.connections.create', compact('connection', 'company', 'agreement', 'project', 'boards', 'priorities'));
+      return view('admin.connections.create', compact('connection', 'company', 'agreement', 'project', 'boards', 'priorities', 'jira_statuses'));
     }
 
     /**
@@ -86,7 +91,7 @@ class ConnectionsController extends Controller
      */
     public function store(ConnectionRequest $request, Connection $connection)
     {
-      // dd([$connection, $request->all()]);
+      dd([$connection, $request->all()]);
       $connection = Connection::create($request->all());
       return redirect('connections')->with([
         'message' => "Connection \"{$request->all()['jira_project_key']}\" has been created",
@@ -247,7 +252,12 @@ class ConnectionsController extends Controller
      */
     public function getCwBoardStatuses(Request $request)
     {
-      $q = empty($request->all()['q']) ? '' : $request->all()['q'];
+
+      if (empty($request->all()['q'])) {
+        return 'no board id supplied';
+      }
+
+      $q = $request->all()['q'];
       $expires = Carbon::now()->addWeek();
       $statuses = Cache::remember('cw_service_boards_status_' . $q, $expires, function () use ($q) {
           return $this->connectwise->get("service/boards/$q/statuses");
@@ -303,6 +313,20 @@ class ConnectionsController extends Controller
         });
       }
       return $projects;
+    }
+
+    /**
+     * Display json object of jira projects
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getJiraStatuses() {
+      $expires = Carbon::now()->addWeek();
+      $statuses = Cache::remember('jira_statuses', $expires, function () {
+          return $this->jira->get('status');
+      });
+      return $statuses;
     }
 
   }

@@ -31,6 +31,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('ajax/get-cw-service-boards', 'ConnectionsController@getCwServiceBoards');
     Route::get('ajax/get-cw-board-statuses', 'ConnectionsController@getCwBoardStatuses');
     Route::get('ajax/get-jira-projects', 'ConnectionsController@getJiraProjects');
+    Route::get('ajax/get-jira-statuses', 'ConnectionsController@getJiraStatuses');
 });
 
 

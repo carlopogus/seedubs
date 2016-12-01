@@ -8,31 +8,61 @@
     </div>
 @endif
 
-<div class="form-group">
-    {!! Form::label('jira_project_key', 'Jira Project Key:') !!}
-    {!! Form::select('jira_project_key', $project, null, ['class' => 'form-control select-ajax--jira-project']) !!}
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            {!! Form::label('jira_project_key', 'Jira Project Key:') !!}
+            {!! Form::select('jira_project_key', $project, null, ['class' => 'form-control select-ajax--jira-project']) !!}
+        </div>
+
+        <div class="form-group">
+            {!! Form::label('cw_company_id', 'CW Company Id:') !!}
+            {!! Form::select('cw_company_id', $company, null, ['class' => 'form-control select-ajax--cw-company']) !!}
+        </div>
+
+        <div class="form-group">
+            {!! Form::label('cw_agreement', 'CW Agreement:') !!}
+            {!! Form::select('cw_agreement', $agreement, null, ['disabled', 'class' => 'form-control select-ajax--cw-agreement']) !!}
+        </div>
+
+        <div class="form-group">
+            {!! Form::label('cw_service_board', 'Service Board:') !!}
+            {!! Form::select('cw_service_board', $boards, $connection->cw_company_id, ['class' => 'form-control select-ajax--cw-boards']) !!}
+        </div>
+
+        <div class="form-group">
+            {!! Form::label('cw_ticket_priority', 'Ticket Priority:') !!}
+            {!! Form::select('cw_ticket_priority', $priorities, $connection->cw_ticket_priority, ['class' => 'form-control select-ajax--cw-priority']) !!}
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="status-maps">
+            <label>Jira to Connectwise ticket status mapping</label>
+
+            <div class="status-map-group">
+                <div class="status-map-group--item form-group">
+                    <div class="form-inline">
+                        <div class="input-group">
+                            {!! Form::select('status_map[0][jira]', $jira_statuses, null, ['disabled', 'class' => 'form-control jira-cw-status-map jira-cw-status-map--jira select-ajax--status-map-jira']) !!}
+                        </div>
+                        <span class="glyphicon glyphicon-resize-horizontal" aria-hidden="true"></span>
+                        <div class="input-group">
+                            {!! Form::select('status_map[0][cw]', ['' => 'Select a Connectwise status'], null, ['disabled', 'class' => 'form-control jira-cw-status-map jira-cw-status-map--cw select-ajax--status-map-cw']) !!}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <button disabled type="button" class="btn btn-primary btn-sm jira-cw-status-map-add">Add another mapping</button>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="form-group">
-    {!! Form::label('cw_company_id', 'CW Company Id:') !!}
-    {!! Form::select('cw_company_id', $company, null, ['class' => 'form-control select-ajax--cw-company']) !!}
-</div>
+
 
 <div class="form-group">
-    {!! Form::label('cw_agreement', 'CW Agreement:') !!}
-    {!! Form::select('cw_agreement', $agreement, null, ['class' => 'form-control select-ajax--cw-agreement']) !!}
+    {!! Form::submit($submitButtonText, ['class' => 'btn btn-success pull-left']) !!}
 </div>
 
-<div class="form-group">
-    {!! Form::label('cw_service_board', 'Service Board:') !!}
-    {!! Form::select('cw_service_board', $boards, $connection->cw_company_id, ['class' => 'form-control select-ajax--cw-boards']) !!}
-</div>
-
-<div class="form-group">
-    {!! Form::label('cw_ticket_priority', 'Ticket Priority:') !!}
-    {!! Form::select('cw_ticket_priority', $priorities, $connection->cw_ticket_priority, ['class' => 'form-control select-ajax--cw-priority']) !!}
-</div>
-
-<div class="form-group">
-    {!! Form::submit($submitButtonText, ['class' => 'btn btn-primary pull-left']) !!}
-</div>
