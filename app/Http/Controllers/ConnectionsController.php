@@ -61,26 +61,29 @@ class ConnectionsController extends Controller
      */
     public function create(Connection $connection)
     {
-      $company = array();
-      $agreement = array();
-      $project = array();
-      $boards = array('' => 'Select a service board');
-      $priorities = array('' => 'Select a ticket priority');
-      $jira_statuses = array('' => 'Select a Jira status');
+
+      $options = array(
+        'connection' => $connection,
+        'jira_project_key' => [],
+        'cw_company_id' => [],
+        'cw_agreement' => [],
+        'cw_service_board' => ['' => 'Select a service board'],
+        'cw_ticket_priority' => ['' => 'Select a ticket priority'],
+        'jira_status_maps' => ['' => 'Select a Jira status'],
+        'cw_status_maps' => ['' => 'Select a Connectwise status'],
+      );
 
       foreach ($this->getJiraStatuses() as $status) {
-        $jira_statuses[$status->id] = $status->name;
+        $options['jira_status_maps'][$status->id] = $status->name;
       }
-
       foreach ($this->getCwServiceBoards() as $board) {
-        $boards[$board->id] = $board->name;
+        $options['cw_service_board'][$board->id] = $board->name;
       }
-
       foreach($this->getCwServicePriorities() as $priority) {
-        $priorities[$priority->id] = $priority->name;
+        $options['cw_ticket_priority'][$priority->id] = $priority->name;
       }
 
-      return view('admin.connections.create', compact('connection', 'company', 'agreement', 'project', 'boards', 'priorities', 'jira_statuses'));
+      return view('admin.connections.create', $options);
     }
 
     /**
@@ -91,7 +94,10 @@ class ConnectionsController extends Controller
      */
     public function store(ConnectionRequest $request, Connection $connection)
     {
-      dd([$connection, $request->all()]);
+      // dd([$connection, $request->all()]);
+      $request->status_maps = 'hello';
+      // dd($request->status_maps);
+
       $connection = Connection::create($request->all());
       return redirect('connections')->with([
         'message' => "Connection \"{$request->all()['jira_project_key']}\" has been created",
@@ -128,18 +134,27 @@ class ConnectionsController extends Controller
      */
     public function edit(Connection $connection)
     {
-      $project = array($connection->jira_project_key => $connection->jira_project_key);
-      $company = $this->getConnectionCompanySelectDefault($connection);
-      $agreement = $this->getConnectionAgreementSelectDefault($connection);
-      $boards = [];
-      $priorities = [];
+      $options = array(
+        'connection' => $connection,
+        'jira_project_key' => [],
+        'cw_company_id' => [],
+        'cw_agreement' => [],
+        'cw_service_board' => ['' => 'Select a service board'],
+        'cw_ticket_priority' => ['' => 'Select a ticket priority'],
+        'jira_status_maps' => ['' => 'Select a Jira status'],
+        'cw_status_maps' => ['' => 'Select a Connectwise status'],
+      );
+
+      foreach ($this->getJiraStatuses() as $status) {
+        $options['jira_status_maps'][$status->id] = $status->name;
+      }
       foreach ($this->getCwServiceBoards() as $board) {
-        $boards[$board->id] = $board->name;
+        $options['cw_service_board'][$board->id] = $board->name;
       }
       foreach($this->getCwServicePriorities() as $priority) {
-        $priorities[$priority->id] = $priority->name;
+        $options['cw_ticket_priority'][$priority->id] = $priority->name;
       }
-      return view('admin.connections.edit', compact('connection', 'company', 'agreement', 'project', 'boards', 'priorities'));
+      return view('admin.connections.edit', $options);
     }
 
 

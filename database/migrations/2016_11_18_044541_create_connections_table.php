@@ -20,6 +20,7 @@ class CreateConnectionsTable extends Migration
             $table->string('cw_company_id');
             $table->string('cw_service_board');
             $table->string('cw_ticket_priority');
+            $table->json('status_maps')->nullable();
             $table->timestamps();
         });
     }

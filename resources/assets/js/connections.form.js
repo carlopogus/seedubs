@@ -63,10 +63,13 @@
         $(".select-ajax--cw-agreement").removeAttr('disabled');
       });
 
-      $(".select-ajax--cw-boards").once().select2({
-        placeholder: 'Select a service board',
-      }).on('select2:select', function (evt) {
-        $('select, button', $statusMaps).removeAttr('disabled');
+      $(".select-ajax--cw-boards").once('cw-service-board', function () {
+        $(this).select2({
+          placeholder: 'Select a service board',
+        }).on('select2:select', function (evt) {
+          $('select, button', $statusMaps).removeAttr('disabled');
+          serviceBoard = $(this).val();
+        });
         serviceBoard = $(this).val();
       });
 

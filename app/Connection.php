@@ -14,11 +14,16 @@ class Connection extends Model
      * @var array
      */
     protected $fillable = [
+        'status_maps',
         'jira_project_key',
         'cw_company_id',
         'cw_agreement',
         'cw_service_board',
         'cw_ticket_priority',
+    ];
+
+    protected $casts = [
+        'status_maps' => 'array',
     ];
 
     private $connectwise;
