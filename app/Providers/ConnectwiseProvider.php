@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class ConnectwiseProvider extends ServiceProvider {
 
@@ -94,6 +96,43 @@ class ConnectwiseProvider extends ServiceProvider {
       break;
     }
   }
+
+  public function getServiceBoardStatuses($id = null) {
+    if (is_null($id)) {
+      return [];
+    }
+    $expires = Carbon::now()->addWeek();
+    $statuses = Cache::remember('cw_service_boards_status_' . $id, $expires, function () use ($id) {
+        return $this->get("service/boards/$id/statuses");
+    });
+    return $statuses;
+  }
+
+  public function getServicePriorities()
+    {
+      $expires = Carbon::now()->addWeek();
+      $priorities = Cache::remember('cw_service_priorities', $expires, function () {
+          return $this->get('service/priorities');
+      });
+      return $priorities;
+    }
+
+    public function getServiceBoards()
+    {
+      $expires = Carbon::now()->addWeek();
+      $boards = Cache::remember('cw_service_boards', $expires, function () {
+          return $this->get('service/boards');
+      });
+      return $boards;
+    }
+
+    public function getAgreement($id) {
+      $expires = Carbon::now()->addWeek();
+      $agreements = Cache::remember('cw_service_boards_' . $id, $expires, function () use ($id) {
+          return $this->get('finance/agreements', ['company/id = ' . $id]);
+      });
+      return $agreements;
+    }
 
   /**
    * Bootstrap any application services.

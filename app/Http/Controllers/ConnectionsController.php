@@ -61,7 +61,12 @@ class ConnectionsController extends Controller
      */
     public function create(Connection $connection)
     {
-
+      // dd($connection);
+      $request = Request::create('ajax/get-cw-board-statuses', 'GET', array('q' => 1));
+      dd($request->route);
+      $statuses = $this->getCwBoardStatuses($request);
+      dd($statuses);
+      dd($connection);
       $options = array(
         'connection' => $connection,
         'jira_project_key' => [],
@@ -134,6 +139,7 @@ class ConnectionsController extends Controller
      */
     public function edit(Connection $connection)
     {
+      // dd($connection);
       $options = array(
         'connection' => $connection,
         'jira_project_key' => [],
@@ -144,6 +150,9 @@ class ConnectionsController extends Controller
         'jira_status_maps' => ['' => 'Select a Jira status'],
         'cw_status_maps' => ['' => 'Select a Connectwise status'],
       );
+
+      $sel = $this->editFormSelectOptions($connection);
+      dd($sel);
 
       foreach ($this->getJiraStatuses() as $status) {
         $options['jira_status_maps'][$status->id] = $status->name;
@@ -156,6 +165,31 @@ class ConnectionsController extends Controller
       }
       return view('admin.connections.edit', $options);
     }
+
+    public function editFormSelectOptions(Connection $connection) {
+      $options = [];
+      $fields = [
+        // 'jira_project_key' => '',
+        // 'cw_company_id' => '',
+        // 'jira_status_maps' => 'getJiraStatuses',
+        // 'jira_status_maps' => '',
+        'cw_agreement' => ['connectwise', 'getAgreement', [$connection->cw_company_id]],
+        'cw_service_board' => ['connectwise', 'getServiceBoards', []],
+        'cw_ticket_priority' => ['connectwise', 'getServicePriorities', []],
+        'cw_status_maps' => ['connectwise', 'getServiceBoardStatuses', [$connection->cw_service_board]],
+      ];
+      foreach ($fields as $field => $func) {
+        $response = [];
+        if (method_exists($this->{$func[0]}, $func[1])) {
+          $response = call_user_func_array([$this->{$func[0]}, $func[1]], $func[2]);
+        }
+        foreach($response as $data) {
+          $options[$field][$data->id] = $data->name;
+        }
+      }
+      return $options;
+    }
+
 
 
     /**
@@ -254,9 +288,11 @@ class ConnectionsController extends Controller
      */
     public function findCwAgreements(Request $request)
     {
+      if (empty($request->all()['q'])) {
+        return 'no company id supplied';
+      }
       $q = empty($request->all()['q']) ? '' : $request->all()['q'];
-      $agreements = $this->connectwise->get('finance/agreements', ['company/id = ' . $q]);
-      return $agreements;
+      return $this->connectwise->getAgreement($q);
     }
 
     /**
@@ -267,16 +303,11 @@ class ConnectionsController extends Controller
      */
     public function getCwBoardStatuses(Request $request)
     {
-
       if (empty($request->all()['q'])) {
         return 'no board id supplied';
       }
-
       $q = $request->all()['q'];
-      $expires = Carbon::now()->addWeek();
-      $statuses = Cache::remember('cw_service_boards_status_' . $q, $expires, function () use ($q) {
-          return $this->connectwise->get("service/boards/$q/statuses");
-      });
+      $statuses = $this->connectwise->getServiceBoardStatuses($id);
       return $statuses;
     }
 
@@ -288,11 +319,7 @@ class ConnectionsController extends Controller
      */
     public function getCwServiceBoards()
     {
-      $expires = Carbon::now()->addWeek();
-      $agreements = Cache::remember('cw_service_boards', $expires, function () {
-          return $this->connectwise->get('service/boards');
-      });
-      return $agreements;
+      return $this->connectwise->getServiceBoards();
     }
 
     /**
@@ -303,11 +330,7 @@ class ConnectionsController extends Controller
      */
     public function getCwServicePriorities()
     {
-      $expires = Carbon::now()->addWeek();
-      $priorities = Cache::remember('cw_service_priorities', $expires, function () {
-          return $this->connectwise->get('service/priorities');
-      });
-      return $priorities;
+      return $this->connectwise->getServicePriorities();
     }
 
     /**
