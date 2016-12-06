@@ -43,8 +43,8 @@
 
 
             @if ($connection->status_maps)
+            <div class="status-map-group">
                 @foreach ($connection->status_maps as $index => $map)
-                <div class="status-map-group">
                     <div class="status-map-group--item form-group">
                         <div class="form-inline">
                             <div class="input-group">
@@ -56,8 +56,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
                 @endforeach
+                </div>
                 <div class="form-group">
                     <button type="button" class="btn btn-primary btn-sm jira-cw-status-map-add">Add another mapping</button>
                 </div>
