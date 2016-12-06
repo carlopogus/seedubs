@@ -52,7 +52,7 @@
                             </div>
                             <span class="glyphicon glyphicon-resize-horizontal" aria-hidden="true"></span>
                             <div class="input-group">
-                                {!! Form::select("status_maps[$index][cw]", ['' => 'Select a Connectwise status'], $map['cw'], ['class' => 'form-control jira-cw-status-map jira-cw-status-map--cw select-ajax--status-map-cw']) !!}
+                                {!! Form::select("status_maps[$index][cw]", $cw_status_maps, $map['cw'], ['class' => 'form-control jira-cw-status-map jira-cw-status-map--cw select-ajax--status-map-cw']) !!}
                             </div>
                         </div>
                     </div>
@@ -70,7 +70,7 @@
                             </div>
                             <span class="glyphicon glyphicon-resize-horizontal" aria-hidden="true"></span>
                             <div class="input-group">
-                                {!! Form::select('status_maps[0][cw]', ['' => 'Select a Connectwise status'], null, ['disabled', 'class' => 'form-control jira-cw-status-map jira-cw-status-map--cw select-ajax--status-map-cw']) !!}
+                                {!! Form::select('status_maps[0][cw]', $cw_status_maps, null, ['disabled', 'class' => 'form-control jira-cw-status-map jira-cw-status-map--cw select-ajax--status-map-cw']) !!}
                             </div>
                         </div>
                     </div>

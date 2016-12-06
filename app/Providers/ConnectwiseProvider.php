@@ -134,6 +134,16 @@ class ConnectwiseProvider extends ServiceProvider {
       return $agreements;
     }
 
+    public function getCompanyById($id) {
+      $expires = Carbon::now()->addWeek();
+      $company = Cache::remember('cw_company_' . $id, $expires, function () use ($id) {
+          return $this->get('company/companies/' . $id);
+      });
+      return $company;
+    }
+
+
+
   /**
    * Bootstrap any application services.
    *

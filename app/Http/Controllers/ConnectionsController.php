@@ -61,33 +61,8 @@ class ConnectionsController extends Controller
      */
     public function create(Connection $connection)
     {
-      // dd($connection);
-      $request = Request::create('ajax/get-cw-board-statuses', 'GET', array('q' => 1));
-      dd($request->route);
-      $statuses = $this->getCwBoardStatuses($request);
-      dd($statuses);
-      dd($connection);
-      $options = array(
-        'connection' => $connection,
-        'jira_project_key' => [],
-        'cw_company_id' => [],
-        'cw_agreement' => [],
-        'cw_service_board' => ['' => 'Select a service board'],
-        'cw_ticket_priority' => ['' => 'Select a ticket priority'],
-        'jira_status_maps' => ['' => 'Select a Jira status'],
-        'cw_status_maps' => ['' => 'Select a Connectwise status'],
-      );
-
-      foreach ($this->getJiraStatuses() as $status) {
-        $options['jira_status_maps'][$status->id] = $status->name;
-      }
-      foreach ($this->getCwServiceBoards() as $board) {
-        $options['cw_service_board'][$board->id] = $board->name;
-      }
-      foreach($this->getCwServicePriorities() as $priority) {
-        $options['cw_ticket_priority'][$priority->id] = $priority->name;
-      }
-
+      $options = $this->editFormSelectOptions($connection);
+      $options['connection'] = $connection;
       return view('admin.connections.create', $options);
     }
 
@@ -139,58 +114,10 @@ class ConnectionsController extends Controller
      */
     public function edit(Connection $connection)
     {
-      // dd($connection);
-      $options = array(
-        'connection' => $connection,
-        'jira_project_key' => [],
-        'cw_company_id' => [],
-        'cw_agreement' => [],
-        'cw_service_board' => ['' => 'Select a service board'],
-        'cw_ticket_priority' => ['' => 'Select a ticket priority'],
-        'jira_status_maps' => ['' => 'Select a Jira status'],
-        'cw_status_maps' => ['' => 'Select a Connectwise status'],
-      );
-
-      $sel = $this->editFormSelectOptions($connection);
-      dd($sel);
-
-      foreach ($this->getJiraStatuses() as $status) {
-        $options['jira_status_maps'][$status->id] = $status->name;
-      }
-      foreach ($this->getCwServiceBoards() as $board) {
-        $options['cw_service_board'][$board->id] = $board->name;
-      }
-      foreach($this->getCwServicePriorities() as $priority) {
-        $options['cw_ticket_priority'][$priority->id] = $priority->name;
-      }
+      $options = $this->editFormSelectOptions($connection);
+      $options['connection'] = $connection;
       return view('admin.connections.edit', $options);
     }
-
-    public function editFormSelectOptions(Connection $connection) {
-      $options = [];
-      $fields = [
-        // 'jira_project_key' => '',
-        // 'cw_company_id' => '',
-        // 'jira_status_maps' => 'getJiraStatuses',
-        // 'jira_status_maps' => '',
-        'cw_agreement' => ['connectwise', 'getAgreement', [$connection->cw_company_id]],
-        'cw_service_board' => ['connectwise', 'getServiceBoards', []],
-        'cw_ticket_priority' => ['connectwise', 'getServicePriorities', []],
-        'cw_status_maps' => ['connectwise', 'getServiceBoardStatuses', [$connection->cw_service_board]],
-      ];
-      foreach ($fields as $field => $func) {
-        $response = [];
-        if (method_exists($this->{$func[0]}, $func[1])) {
-          $response = call_user_func_array([$this->{$func[0]}, $func[1]], $func[2]);
-        }
-        foreach($response as $data) {
-          $options[$field][$data->id] = $data->name;
-        }
-      }
-      return $options;
-    }
-
-
 
     /**
      * return cw company for connection.
@@ -340,15 +267,9 @@ class ConnectionsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function getJiraProjects(Request $request, Setting $setting) {
-      $expires = Carbon::now()->addWeek();
-      $projects = Cache::remember('jira_projects', $expires, function () {
-          return $this->jira->get('project');
-      });
-
+      $projects = [];
       if ($q = empty($request->all()['q']) ? '' : $request->all()['q']) {
-        $projects = array_filter($projects, function($var) use ($q){
-          return strpos(strtolower($var->name), strtolower($q)) !== FALSE;
-        });
+        $projects = $this->jira->getProjectsFiltered($q);
       }
       return $projects;
     }
@@ -360,11 +281,43 @@ class ConnectionsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function getJiraStatuses() {
-      $expires = Carbon::now()->addWeek();
-      $statuses = Cache::remember('jira_statuses', $expires, function () {
-          return $this->jira->get('status');
-      });
-      return $statuses;
+      return $this->jira->getStatuses();
+    }
+
+
+
+    public function editFormSelectOptions(Connection $connection) {
+      // dd($connection->cw_company_id);
+      $options = [];
+      $fields = [
+        'jira_project_key' => ['jira', 'getProjectById', [$connection->jira_project_key]],
+        'cw_company_id' => ['connectwise', 'getCompanyById', [$connection->cw_company_id]],
+        'jira_status_maps' => ['jira', 'getStatuses', []],
+        'cw_agreement' => ['connectwise', 'getAgreement', [$connection->cw_company_id]],
+        'cw_service_board' => ['connectwise', 'getServiceBoards', []],
+        'cw_ticket_priority' => ['connectwise', 'getServicePriorities', []],
+        'cw_status_maps' => ['connectwise', 'getServiceBoardStatuses', [$connection->cw_service_board]],
+      ];
+      foreach ($fields as $field => $func) {
+        $response = [];
+        if (method_exists($this->{$func[0]}, $func[1]) && (empty($func[2]) || !is_null($func[2][0]))) {
+          $response = call_user_func_array([$this->{$func[0]}, $func[1]], $func[2]);
+        }
+
+
+        if (is_array($response) && !empty($response)) {
+          foreach($response as $data) {
+            $options[$field][$data->id] = $data->name;
+          }
+        }
+        elseif (is_object($response) && !empty($response)) {
+          $options[$field][$response->id] = $response->name;
+        }
+        else {
+          $options[$field][''] = 'select an option';
+        }
+      }
+      return $options;
     }
 
   }

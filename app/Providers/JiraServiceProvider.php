@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class JiraServiceProvider extends ServiceProvider
 {
@@ -85,6 +87,59 @@ class JiraServiceProvider extends ServiceProvider
     }
     return $headers;
   }
+
+   /**
+     * Get Jira board statuses.
+     */
+    public function getStatuses() {
+      $expires = Carbon::now()->addWeek();
+      $statuses = Cache::remember('jira_statuses', $expires, function () {
+          return $this->get('status');
+      });
+      return $statuses;
+    }
+
+        /**
+     * Display json object of jira projects
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getProjects() {
+      $expires = Carbon::now()->addWeek();
+      $projects = Cache::remember('jira_projects', $expires, function () {
+          return $this->get('project');
+      });
+      return $projects;
+    }
+
+    /**
+     * Display json object of jira projects
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getProjectById($id) {
+      $expires = Carbon::now()->addWeek();
+      $projects = Cache::remember('jira_project_' . $id, $expires, function () use ($id) {
+          return $this->get('project/' . $id);
+      });
+      return $projects;
+    }
+
+    /**
+     * Display json object of jira projects
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getProjectsFiltered($phrase) {
+      $projects = $this->getProjects();
+      $filtered = array_filter($projects, function($var) use ($phrase){
+        return strpos(strtolower($var->name), strtolower($phrase)) !== FALSE;
+      });
+      return $filtered;
+    }
 
     /**
      * Bootstrap the application services.
