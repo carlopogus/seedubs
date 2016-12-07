@@ -116,6 +116,7 @@ class ConnectionsController extends Controller
     {
       $options = $this->editFormSelectOptions($connection);
       $options['connection'] = $connection;
+      // dd($options);
       return view('admin.connections.edit', $options);
     }
 
@@ -234,7 +235,7 @@ class ConnectionsController extends Controller
         return 'no board id supplied';
       }
       $q = $request->all()['q'];
-      $statuses = $this->connectwise->getServiceBoardStatuses($id);
+      $statuses = $this->connectwise->getServiceBoardStatuses($q);
       return $statuses;
     }
 
@@ -317,6 +318,8 @@ class ConnectionsController extends Controller
           $options[$field][''] = 'select an option';
         }
       }
+      $options['cw_status_maps'] = array_merge(array('' => '- none -'), $options['cw_status_maps']);
+      $options['jira_status_maps'] = array_merge(array('' => '- none -'), $options['jira_status_maps']);
       return $options;
     }
 

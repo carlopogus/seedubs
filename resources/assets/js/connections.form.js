@@ -9,6 +9,7 @@
     attach: function(context, settings) {
       this.select2Init();
       this.serviceMappingAddMore();
+      this.removeInput();
     },
 
     getCwStatuses: function (boardId, callback) {
@@ -76,47 +77,38 @@
       });
 
       $(".select-ajax--cw-boards").once('cw-service-board').each(function(){
-        $(this).select2();
         $(this).select2({
           placeholder: 'Select a service board',
-        }).on('select2:select', function (evt) {
-          $('select, button', $statusMaps).removeAttr('disabled');
-          serviceBoard = $(this).val();
-          self.getCwStatuses(serviceBoard, function(data) {
+        })
+
+        .on('select2:select', '.select-ajax--status-map-cw', function (evt) {
+          self.serviceBoard = $(this).val();
+          self.getCwStatuses(self.serviceBoard, function(data) {
             $('.select-ajax--status-map-cw').trigger('change.select2');
           });
         });
-        serviceBoard = $(this).val();
-        self.getCwStatuses(serviceBoard, function(data) {
-          $('.select-ajax--status-map-cw').empty();
-          $.each(data, function (i, v) {
-            $('.select-ajax--status-map-cw').append('<option value="' + v.id + '">' + v.name + '</option>');
-          });
-          $('.select-ajax--status-map-cw').trigger('change.select2');
-        });
+
+        self.serviceBoard = $(this).val();
+
       });
 
-      // $(".select-ajax--cw-boards").once('cw-service-board', function () {
-      //   $(this).select2();
-      //   $(this).select2({
-      //     placeholder: 'Select a service board',
-      //   }).on('select2:select', function (evt) {
-      //     $('select, button', $statusMaps).removeAttr('disabled');
-      //     serviceBoard = $(this).val();
-      //   });
-      //   self.getCwStatuses($(this).val());
-      //   serviceBoard = $(this).val();
-      // });
 
       $(".select-ajax--cw-priority").once().select2({
         placeholder: 'Select a priority'
       });
 
-      $('.select-ajax--status-map-cw').once().select2({
-        placeholder: 'Select a Connectwise status',
+      $('.select-ajax--status-map-cw').once().each(function(){
+        var $this = $(this);
+        self.getCwStatuses(self.serviceBoard, function(data) {
+          $.each(data, function (i, v) {
+            $this.append('<option value="' + v.id + '">' + v.name + '</option>');
+          });
+          $this.select2({placeholder: 'Select a ticket status'});
+        });
       });
 
-      $('.select-ajax--status-map-jira').once().select2({
+
+      $('.select-ajax--status-map-jira').once().val('').select2({
         placeholder: 'Select a Jira status'
       });
 
@@ -148,7 +140,7 @@
 
     serviceMappingAddMore: function() {
       var self = this;
-      $('.jira-cw-status-map-add').click(function () {
+      $('.jira-cw-status-map-add').once('add-another').click(function () {
         var $clone = $statusMapGroupItem.clone();
         $clone.find('select').removeAttr('disabled');
 
@@ -162,9 +154,19 @@
 
         $('.status-map-group').append($clone);
         $statusMaps = $('.status-maps');
-        self.select2Init();
+        self.attach();
+      });
+    },
+
+    removeInput: function () {
+      $('.close').once('remove-input').click(function(e){
+        var $parent = $(this).closest('.form-group');
+        if ($parent.index() !== 0) {
+          $parent.remove();
+        }
       });
     }
+
   };
 
 })(jQuery, LaravelApp, this, this.document);
@@ -192,3 +194,5 @@
 //   });
 
 // });
+
+//# sourceMappingURL=connections.form.js.map

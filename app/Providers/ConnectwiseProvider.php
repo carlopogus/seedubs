@@ -97,6 +97,11 @@ class ConnectwiseProvider extends ServiceProvider {
     }
   }
 
+  public function cmp($a, $b)
+  {
+    return strcmp($a->name, $b->name);
+  }
+
   public function getServiceBoardStatuses($id = null) {
     if (is_null($id)) {
       return [];
@@ -105,6 +110,7 @@ class ConnectwiseProvider extends ServiceProvider {
     $statuses = Cache::remember('cw_service_boards_status_' . $id, $expires, function () use ($id) {
         return $this->get("service/boards/$id/statuses");
     });
+    usort($statuses, array($this, "cmp"));
     return $statuses;
   }
 

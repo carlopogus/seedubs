@@ -26,6 +26,20 @@ class Connection extends Model
         'status_maps' => 'array',
     ];
 
+    public function getStatusMapsAttribute($value) {
+        $obj = json_decode($value);
+        if (empty($obj) || (empty($obj->cw) || empty($obj->jira))) {
+            // $default = new \stdClass();
+            // $default->cw = '';
+            // $default->jira = '';
+            $default = array('cw' => '', 'jira' => '');
+            // $value = json_encode(array($default));
+            $value = array($default);
+        }
+        // dd(json_decode($value));
+        return $value;
+    }
+
     private $connectwise;
 
 }

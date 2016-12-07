@@ -54,6 +54,9 @@
                             <div class="input-group">
                                 {!! Form::select("status_maps[$index][cw]", $cw_status_maps, $map['cw'], ['class' => 'form-control jira-cw-status-map jira-cw-status-map--cw select-ajax--status-map-cw']) !!}
                             </div>
+                            <div class="input-group">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            </div>
                         </div>
                     </div>
                 @endforeach
@@ -66,17 +69,20 @@
                     <div class="status-map-group--item form-group">
                         <div class="form-inline">
                             <div class="input-group">
-                                {!! Form::select('status_maps[0][jira]', $jira_status_maps, null, ['disabled', 'class' => 'form-control jira-cw-status-map jira-cw-status-map--jira select-ajax--status-map-jira']) !!}
+                                {!! Form::select('status_maps[0][jira]', $jira_status_maps, null, ['class' => 'form-control jira-cw-status-map jira-cw-status-map--jira select-ajax--status-map-jira']) !!}
                             </div>
                             <span class="glyphicon glyphicon-resize-horizontal" aria-hidden="true"></span>
                             <div class="input-group">
-                                {!! Form::select('status_maps[0][cw]', $cw_status_maps, null, ['disabled', 'class' => 'form-control jira-cw-status-map jira-cw-status-map--cw select-ajax--status-map-cw']) !!}
+                                {!! Form::select('status_maps[0][cw]', $cw_status_maps, null, ['class' => 'form-control jira-cw-status-map jira-cw-status-map--cw select-ajax--status-map-cw']) !!}
+                            </div>
+                            <div class="input-group">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <button disabled type="button" class="btn btn-primary btn-sm jira-cw-status-map-add">Add another mapping</button>
+                    <button type="button" class="btn btn-primary btn-sm jira-cw-status-map-add">Add another mapping</button>
                 </div>
             @endif
         </div>

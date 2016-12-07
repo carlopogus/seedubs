@@ -88,6 +88,11 @@ class JiraServiceProvider extends ServiceProvider
     return $headers;
   }
 
+  public function cmp($a, $b)
+  {
+    return strcmp($a->name, $b->name);
+  }
+
    /**
      * Get Jira board statuses.
      */
@@ -96,6 +101,7 @@ class JiraServiceProvider extends ServiceProvider
       $statuses = Cache::remember('jira_statuses', $expires, function () {
           return $this->get('status');
       });
+      usort($statuses, array($this, "cmp"));
       return $statuses;
     }
 
